@@ -1,0 +1,64 @@
+managed implementation in class zbp_i_fk_inv_hdr unique;
+strict ( 2 );
+with draft;
+
+define behavior for ZI_FK_INV_HDR alias Invoice
+persistent table ztfk_inv_hdr
+draft table ztfk_inv_hdr_d
+lock master
+total etag LocalLastChangedAt
+authorization master ( global )
+etag master LastChangedAt
+early numbering
+{
+
+  create;
+  update;
+  delete;
+
+  field ( readonly ) Invoice;
+
+  association _Attachment { create; with draft; }
+
+  draft action Edit;
+  draft action Activate;
+  draft action Resume;
+  draft action Discard;
+  draft determine action Prepare;
+
+  mapping for ztfk_inv_hdr
+    {
+      Invoice            = invoice;
+      VendorId           = vendor_id;
+      LocalCreatedBy     = local_created_by;
+      LocalLastChangedAt = local_last_changed_at;
+      LocalLastChangedBy = local_last_changed_by;
+      LastChangedAt      = last_changed_at;
+    }
+}
+
+define behavior for ZI_FK_INV_ATTACH alias Attachment
+persistent table ztfk_inv_attach
+draft table ztfk_inv_attachd
+lock dependent by _Header
+authorization dependent by _Header
+etag master LastChangedAt
+early numbering
+{
+  update;
+  delete;
+  field ( readonly ) Invoice;
+  field ( readonly ) AttachId;
+  association _Header { with draft; }
+
+  mapping for ztfk_inv_attach
+    {
+      AttachId   = attach_id;
+      Attachment = attachment;
+      Comments   = comments;
+      Invoice    = invoice;
+      Mimetype   = mimetype;
+      Filename   = filename;
+    }
+
+}

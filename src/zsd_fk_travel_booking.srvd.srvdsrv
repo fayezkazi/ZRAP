@@ -1,0 +1,5 @@
+@EndUserText.label: 'Travel Booking Service Definition'
+define service ZSD_FK_TRAVEL_BOOKING {
+  expose ZC_FK_TRAVEL_HDR as Travel;
+  expose ZC_FK_BOOKING    as Booking;
+}
